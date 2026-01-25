@@ -1,0 +1,29 @@
+# 環境変数
+.env
+
+# データディレクトリ
+data/db/*
+data/storage/*
+!data/db/.gitkeep
+!data/storage/.gitkeep
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Laravel (src内)
+src/vendor/
+src/node_modules/
+src/.env
+src/storage/*.key
+src/storage/logs/*
+!src/storage/logs/.gitkeep
+src/.composer
+src/vendor
+src/.env
