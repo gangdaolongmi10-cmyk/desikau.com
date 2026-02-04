@@ -44,6 +44,7 @@ final class UserSeeder extends Seeder
                     'email' => $userData['email'],
                     'password' => Hash::make($userData['password']),
                     'email_verified_at' => now(),
+                    'icon_url' => 'https://yt3.googleusercontent.com/87cGpoLYzGJJWveiEfqBOX99uLoceI5H2aYIPrjSo5BAcgM7w4rAT4pCFni0_ZiU9ShvyVmAoQ=s900-c-k-c0x00ffffff-no-rj',
                 ]
             );
         }

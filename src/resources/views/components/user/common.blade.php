@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title }}</title>
+    <title>{{ $title }} | {{ config('app.name') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
+        [x-cloak] { display: none !important; }
         .carousel-container { scroll-behavior: smooth; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -20,7 +23,7 @@
         .cart-bump { animation: bump 0.3s ease-out; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-gray-50 text-gray-900 overflow-x-hidden">
     <x-user.header />
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {{ $slot }}
@@ -31,22 +34,109 @@
         lucide.createIcons();
 
         // Cart State
-        let cartItemCount = 0;
         const cartCountEl = document.getElementById('cart-count');
-        const cartCountBadge = document.getElementById('cart-button');
 
-        function addToCart() {
-            cartItemCount++;
-            cartCountEl.textContent = cartItemCount;
+        /**
+         * カートに商品を追加
+         */
+        function addToCart(productId) {
+            fetch('{{ route("user.cart.add") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({ product_id: productId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // カート数を更新
+                    cartCountEl.textContent = data.cart_count;
 
-            // アニメーションの追加
-            cartCountEl.classList.add('cart-bump');
-            setTimeout(() => {
-                cartCountEl.classList.remove('cart-bump');
-            }, 300);
+                    // アニメーションの追加
+                    cartCountEl.classList.add('cart-bump');
+                    setTimeout(() => {
+                        cartCountEl.classList.remove('cart-bump');
+                    }, 300);
 
-            // カート投入がわかるようにコンソールにも表示（開発用）
-            console.log('Item added to cart. Total items:', cartItemCount);
+                    // トースト通知（存在すれば）
+                    if (typeof showToast === 'function') {
+                        showToast(data.message);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        /**
+         * カート数を初期化
+         */
+        function initCartCount() {
+            fetch('{{ route("user.cart.count") }}', {
+                headers: {
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                cartCountEl.textContent = data.count;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // ページ読み込み時にカート数を取得
+        initCartCount();
+
+        /**
+         * お気に入りをトグル
+         */
+        function toggleLike(productId, button) {
+            const isLiked = button.dataset.liked === 'true';
+            const method = isLiked ? 'DELETE' : 'POST';
+            const url = `/products/${productId}/likes`;
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    // 未ログインの場合はログインページへ
+                    window.location.href = '{{ route("user.login.index") }}';
+                    return;
+                }
+                if (response.ok) {
+                    // 状態を更新
+                    const newLiked = !isLiked;
+                    button.dataset.liked = newLiked ? 'true' : 'false';
+
+                    // アイコンの見た目を更新
+                    const icon = button.querySelector('[data-lucide="heart"]');
+                    if (newLiked) {
+                        icon.classList.remove('text-gray-400', 'group-hover/like:text-red-400');
+                        icon.classList.add('text-red-500', 'fill-red-500');
+                    } else {
+                        icon.classList.remove('text-red-500', 'fill-red-500');
+                        icon.classList.add('text-gray-400', 'group-hover/like:text-red-400');
+                    }
+
+                    // アニメーション
+                    button.classList.add('scale-125');
+                    setTimeout(() => button.classList.remove('scale-125'), 200);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }
 
         // Carousel Logic

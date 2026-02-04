@@ -1,4 +1,4 @@
-<x-user.common title="Welcome">
+<x-user.common title="お問い合わせ">
     <div class="max-w-2xl mx-auto">
         <x-user.page-title
             title="お問い合わせ"
@@ -7,13 +7,16 @@
 
         <!-- Contact Form Card -->
         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-10">
-            <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-6">
+            <form id="contact-form" class="space-y-6">
+                @csrf
                 <x-user.form.input
                     type="text"
                     name="name"
                     label="お名前"
                     placeholder="山田 太郎"
                     :required="true"
+                    :value="Auth::user()?->name"
+                    :readonly="Auth::check()"
                 />
 
                 <x-user.form.input
@@ -22,6 +25,8 @@
                     label="メールアドレス"
                     placeholder="you@example.com"
                     :required="true"
+                    :value="Auth::user()?->email"
+                    :readonly="Auth::check()"
                 />
 
                 <x-user.form.textarea
@@ -39,6 +44,9 @@
                     </label>
                 </div>
 
+                <!-- Error Message -->
+                <div id="error-msg" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl"></div>
+
                 <!-- Submit Button -->
                 <x-user.form.button id="submit-btn" icon="send">メッセージを送信する</x-user.form.button>
             </form>
@@ -50,10 +58,56 @@
                 </div>
                 <h2 class="text-2xl font-bold text-gray-900 mb-2">送信が完了しました</h2>
                 <p class="text-gray-500 mb-8">お問い合わせありがとうございます。内容を確認次第、担当者よりメールにてご連絡いたします。</p>
-                <a href="index.html" class="inline-flex items-center justify-center px-8 py-3 bg-gray-900 text-white font-bold rounded-2xl hover:bg-indigo-600 transition-all">
+                <a href="{{ route('user.home.index') }}" class="inline-flex items-center justify-center px-8 py-3 bg-gray-900 text-white font-bold rounded-2xl hover:bg-indigo-600 transition-all">
                     ストアに戻る
                 </a>
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        $(function() {
+            $('#contact-form').on('submit', function(e) {
+                e.preventDefault();
+
+                const $form = $(this);
+                const $submitBtn = $('#submit-btn');
+                const $errorMsg = $('#error-msg');
+
+                // ボタンを無効化
+                $submitBtn.prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
+                $errorMsg.addClass('hidden').text('');
+
+                $.ajax({
+                    url: '{{ route('user.inquiry.store') }}',
+                    method: 'POST',
+                    data: $form.serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            $form.addClass('hidden');
+                            $('#success-msg').removeClass('hidden');
+                            // Lucideアイコンを再描画
+                            if (typeof lucide !== 'undefined') {
+                                lucide.createIcons();
+                            }
+                        }
+                    },
+                    error: function(xhr) {
+                        $submitBtn.prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
+
+                        if (xhr.status === 422) {
+                            // バリデーションエラー
+                            const errors = xhr.responseJSON.errors;
+                            const errorMessages = Object.values(errors).flat().join('<br>');
+                            $errorMsg.html(errorMessages).removeClass('hidden');
+                        } else {
+                            $errorMsg.text('送信に失敗しました。しばらく経ってからもう一度お試しください。').removeClass('hidden');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    @endpush
 </x-user.common>

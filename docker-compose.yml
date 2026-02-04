@@ -3,6 +3,9 @@ services:
     build:
       context: ./docker/php
       dockerfile: Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
     container_name: desikau-app
     restart: unless-stopped
     working_dir: /var/www
@@ -12,6 +15,7 @@ services:
       - desikau-network
     depends_on:
       - db
+      - mailhog
 
   nginx:
     image: nginx:alpine
@@ -39,7 +43,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./data/db:/var/lib/mysql
+      - db-data:/var/lib/mysql
     networks:
       - desikau-network
 
@@ -53,6 +57,36 @@ services:
       - desikau-network
     tty: true
 
+  stripe-cli:
+    image: stripe/stripe-cli:latest
+    container_name: desikau-stripe
+    env_file:
+      - ./src/.env
+    environment:
+      - STRIPE_API_KEY=${STRIPE_SECRET:-}
+    networks:
+      - desikau-network
+    depends_on:
+      - nginx
+    command: listen --forward-to http://nginx/stripe/webhook --api-key ${STRIPE_SECRET:-}
+    tty: true
+    stdin_open: true
+    profiles:
+      - stripe
+
+  mailhog:
+      image: mailhog/mailhog:latest
+      container_name: desikau-mailhog
+      ports:
+        - "8025:8025"
+        - "1025:1025"
+      networks:
+        - desikau-network
+
 networks:
   desikau-network:
+    name: desikau-network
     driver: bridge
+
+volumes:
+  db-data:

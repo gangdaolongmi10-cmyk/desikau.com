@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Actions\User\LoginAction;
+use App\Actions\User\LogoutAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\LoginRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * ログインコントローラー
@@ -24,40 +25,30 @@ final class LoginController extends Controller
     /**
      * ログイン処理
      */
-    public function login(LoginRequest $request): RedirectResponse
+    public function login(LoginRequest $request, LoginAction $action): RedirectResponse
     {
-        $credentials = $request->credentials();
-        $remember = $request->remember();
+        $result = $action->execute(
+            $request->credentials(),
+            $request->remember(),
+            $request->loginType()
+        );
 
-        if (Auth::attempt($credentials, $remember)) {
-            // セッションを再生成（セッション固定攻撃対策）
-            $request->session()->regenerate();
-
-            // 前の画面にリダイレクト（なければホームへ）
-            return redirect()->intended(route('user.home.index'))
-                ->with('success', 'ログインしました。');
+        if (!$result['success']) {
+            return back()
+                ->withInput($request->only('email', 'remember', 'login_type'))
+                ->withErrors(['email' => $result['message']]);
         }
 
-        // 認証失敗
-        return back()
-            ->withInput($request->only('email', 'remember'))
-            ->withErrors([
-                'email' => 'メールアドレスまたはパスワードが正しくありません。',
-            ]);
+        return redirect()->intended($result['redirect'])
+            ->with('success', $result['message']);
     }
 
     /**
      * ログアウト処理
      */
-    public function logout(): RedirectResponse
+    public function logout(LogoutAction $action): RedirectResponse
     {
-        Auth::logout();
-
-        // セッションを無効化
-        request()->session()->invalidate();
-
-        // CSRFトークンを再生成
-        request()->session()->regenerateToken();
+        $action->execute();
 
         return redirect()->route('user.home.index')
             ->with('success', 'ログアウトしました。');

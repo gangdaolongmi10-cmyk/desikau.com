@@ -1,0 +1,1 @@
+入力されたテーブル名に対し、Laravel 11の最新規約に沿って Model, Migration, Factory, Seeder, FormRequest を作成してください。マイグレーションには id, timestamps, deleted_at (SoftDeletes) をデフォルトで含め、モデルには $fillable を適切に設定してください。

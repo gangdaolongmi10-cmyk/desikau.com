@@ -2,15 +2,19 @@
 
 /**
  * 管理画面のルート定義
- * サブドメイン: admin.desikau.local
+ * プレフィックス: /admin
+ * ルート名プレフィックス: admin.（bootstrap/app.phpで設定済み）
  */
 
 use Illuminate\Support\Facades\Route;
 
-Route::name('admin.')->group(function () {
-    Route::get('/', function () {
-        return view('admin.dashboard.index');
-    })->name('dashboard.index');
+/*
+|--------------------------------------------------------------------------
+| ダッシュボード
+|--------------------------------------------------------------------------
+*/
+Route::get('/', function () {
+    return view('admin.dashboard.index');
+})->name('dashboard.index');
 
-    // TODO: 管理画面のルートを追加
-});
+// TODO: 管理画面のルートを追加

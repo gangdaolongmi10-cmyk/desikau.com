@@ -1,8 +1,12 @@
-.PHONY: build up down restart logs ps shell shell-db npm artisan composer fresh
+.PHONY: build up down restart logs ps shell shell-db npm artisan composer fresh stripe-listen stripe-webhook stripe-trigger
+
+# 現在のユーザーのUID/GIDを取得
+export UID := $(shell id -u)
+export GID := $(shell id -g)
 
 # Dockerコンテナをビルド
 build:
-	docker-compose build
+	UID=$(UID) GID=$(GID) docker-compose build
 
 # Dockerコンテナを起動
 up:
@@ -63,6 +67,25 @@ dev:
 # 本番ビルド
 build-assets:
 	docker-compose run --rm node npm run build
+
+# Stripe APIキーを.envから読み込み
+STRIPE_SECRET := $(shell grep STRIPE_SECRET src/.env | cut -d '=' -f2)
+
+# Stripe Webhookをリッスン（APIキー使用）
+stripe-listen:
+	@echo "Stripe Webhookを開始します..."
+	docker run -it --rm --network desikau-network stripe/stripe-cli listen --forward-to http://nginx/stripe/webhook --api-key $(STRIPE_SECRET)
+
+# Stripe Webhookをリッスン（Webhook Secret表示）
+stripe-webhook:
+	@echo "Stripe Webhookを開始します..."
+	@echo "表示されるwebhook signing secretを .env の STRIPE_WEBHOOK_SECRET に設定してください"
+	docker run -it --rm --network desikau-network stripe/stripe-cli listen --forward-to http://nginx/stripe/webhook --api-key $(STRIPE_SECRET) --print-secret
+
+# Stripeイベントをトリガー（テスト用）
+# 使用例: make stripe-trigger checkout.session.completed
+stripe-trigger:
+	docker run --rm --network desikau-network stripe/stripe-cli trigger $(filter-out $@,$(MAKECMDGOALS)) --api-key $(STRIPE_SECRET)
 
 %:
 	@:

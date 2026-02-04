@@ -12,7 +12,18 @@
                     <p class="text-gray-500 text-sm">クリエイターの世界へようこそ。</p>
                 </div>
 
-                <form action="#" class="space-y-6">
+                <form action="{{ route('user.register.register') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    @csrf
+
+                    {{-- エラーメッセージ --}}
+                    @if ($errors->any())
+                        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm">
+                            @foreach ($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
+
                     <!-- Icon Upload Section -->
                     <div class="flex flex-col items-center mb-6">
                         <div class="relative group">
@@ -21,7 +32,7 @@
                             </div>
                             <label for="icon-upload" class="absolute bottom-0 right-0 bg-indigo-600 text-white p-2 rounded-full shadow-lg cursor-pointer hover:bg-indigo-700 transition-all">
                                 <i data-lucide="camera" class="w-4 h-4"></i>
-                                <input type="file" id="icon-upload" accept="image/*" class="hidden" onchange="previewImage(event)">
+                                <input type="file" id="icon-upload" name="icon" accept="image/*" class="hidden" onchange="previewImage(event)">
                             </label>
                         </div>
                         <p class="text-[11px] text-gray-400 mt-3 font-medium">プロフィール画像を選択</p>
@@ -34,6 +45,7 @@
                         label="ユーザー名"
                         placeholder="クリエイター名"
                         icon="user-tag"
+                        :value="old('username')"
                         :required="true"
                     />
 
@@ -44,19 +56,30 @@
                         label="メールアドレス"
                         placeholder="you@example.com"
                         icon="mail"
+                        :value="old('email')"
                         :required="true"
                     />
 
                     <!-- Password -->
-                    <x-user.form.input
-                        type="password"
-                        name="password"
-                        label="パスワード"
-                        placeholder="8文字以上の英数字"
-                        icon="lock"
-                        hint="※セキュリティのため、記号を含めることを推奨します。"
-                        :required="true"
-                    />
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">パスワード</label>
+                        <div class="relative" data-password-container>
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="8文字以上の英数字"
+                                data-password-input
+                                required
+                                class="w-full px-4 py-3.5 rounded-2xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none pl-11 pr-12"
+                            >
+                            <i data-lucide="lock" class="absolute left-4 top-4 text-gray-400 w-5 h-5"></i>
+                            <button type="button" data-password-toggle class="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600">
+                                <i data-lucide="eye" data-password-icon-show class="w-5 h-5"></i>
+                                <i data-lucide="eye-off" data-password-icon-hide class="w-5 h-5 hidden"></i>
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-gray-400 mt-2 ml-1">※セキュリティのため、記号を含めることを推奨します。</p>
+                    </div>
 
                     <div class="pt-2">
                         <x-user.form.button>アカウントを無料で作成</x-user.form.button>

@@ -10,28 +10,37 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
         using: function () {
-            $domain = config('app.domain', 'desikau.local');
+            // 出品者向けサイト (/seller) - user.phpより先に読み込む
+            Route::middleware('web')
+                ->prefix('seller')
+                ->name('seller.')
+                ->group(base_path('routes/seller.php'));
 
-            // ユーザー向けサイト (desikau.local)
-            Route::domain($domain)
-                ->middleware('web')
+            // ユーザー向けサイト (/)
+            Route::middleware('web')
                 ->group(base_path('routes/user.php'));
 
-            // 管理画面 (admin.desikau.local)
-            Route::domain('admin.' . $domain)
-                ->middleware('web')
+            // 管理画面 (/admin)
+            Route::middleware('web')
+                ->prefix('admin')
+                ->name('admin.')
                 ->group(base_path('routes/admin.php'));
 
-            // API (api.desikau.local)
-            Route::domain('api.' . $domain)
-                ->middleware('api')
+            // API (/api)
+            Route::middleware('api')
+                ->prefix('api')
+                ->name('api.')
                 ->group(base_path('routes/api.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'seller.auto-login' => \App\Http\Middleware\AutoLoginSeller::class,
         ]);
+
+        // 未認証ユーザーのリダイレクト先を設定
+        $middleware->redirectGuestsTo('/login');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

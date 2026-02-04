@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\User;
 
+use App\Enums\Role;
 use App\Rules\AlphanumericPassword;
 use App\Rules\ProhibitedCharacters;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * ログインリクエストのバリデーション
@@ -46,6 +48,11 @@ final class LoginRequest extends FormRequest
                 'nullable',
                 'boolean',
             ],
+            'login_type' => [
+                'required',
+                'string',
+                Rule::in(Role::values()),
+            ],
         ];
     }
 
@@ -84,5 +91,13 @@ final class LoginRequest extends FormRequest
     public function remember(): bool
     {
         return $this->boolean('remember');
+    }
+
+    /**
+     * ログインタイプ（ロール）を取得
+     */
+    public function loginType(): Role
+    {
+        return Role::from($this->input('login_type', Role::USER->value));
     }
 }

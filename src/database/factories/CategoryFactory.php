@@ -24,23 +24,38 @@ final class CategoryFactory extends Factory
     private static int $sortCounter = 1;
 
     /**
+     * カテゴリー名のリスト
+     */
+    private const CATEGORY_NAMES = [
+        '3Dモデル',
+        'テクスチャ・マテリアル',
+        'UIキット',
+        'アイコン',
+        'フォント',
+        'イラスト素材',
+        ' 写真素材',
+        'サウンド・音楽',
+        'テンプレート',
+        'ブラシ・ツール',
+        'モーショングラフィックス',
+        'ゲームアセット',
+        'プラグイン・拡張機能',
+        'チュートリアル・教材',
+        'その他',
+    ];
+
+    /**
      * デフォルトの状態を定義
      *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
-        $name = fake()->unique()->randomElement([
-            'テストカテゴリー1',
-            'テストカテゴリー2',
-            'テストカテゴリー3',
-            'テストカテゴリー4',
-            'テストカテゴリー5',
-        ]);
+        $name = fake()->unique()->randomElement(self::CATEGORY_NAMES);
 
         return [
             'name' => $name,
-            'slug' => Str::slug($name),
+            'slug' => Str::slug($name) . '-' . fake()->unique()->randomNumber(3),
             'sort_no' => self::$sortCounter++,
             'is_active' => true,
         ];

@@ -1,0 +1,1 @@
+<?php echo "hostname:" . gethostname() . " pid:" . getmypid();

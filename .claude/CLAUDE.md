@@ -22,6 +22,7 @@
 - コメントは関数・クラス・重要な変数・複雑な処理に日本語で記述
 - コードは可読性を優先し、簡潔に保つ
 - 命名規則はプロジェクト全体で統一する
+- 関数は50行以内
 
 ## PHP
 - PSR-12に準拠すること
@@ -45,6 +46,16 @@
 - Seederを作成したらFactoryを作成すること（テストデータ生成用）
 - ルート定義やコントローラーの命名規則はLaravel標準に従う
 - バリデーションはRequestクラスで行うこと
+- factoryは日本語
+
+### マイグレーション作成ルール
+- コマンド: `/migrate [テーブル名]`
+- 動作: 指定されたテーブル用のマイグレーションファイルを新規作成する。
+- 命名規則: `YYYY_MM_DD_HHMMSS_create_[table_name]_table.sql`
+- 規約:
+  - 1ファイルにつき1テーブルのみ記述すること。
+  - 基本的なカラム（id, created_at, updated_at）は自動で含めること。
+  - 既存の `migrations/` ディレクトリ内の最新のタイムスタンプを確認し、それより後の時刻を使用すること。
 
 ## CSS
 - TailwindCSSを使用すること
@@ -127,23 +138,41 @@
 ## 初期セットアップ
 - `make init-laravel` - Laravelプロジェクトを新規作成
 
-# サブドメインルーティング
-
-## ドメイン構成
-- `desikau.local` - ユーザー向けサイト (routes/user.php)
-- `admin.desikau.local` - 管理画面 (routes/admin.php)
-- `api.desikau.local` - API (routes/api.php)
-
-## hostsファイル設定（開発環境）
-```
-127.0.0.1 desikau.local
-127.0.0.1 admin.desikau.local
-127.0.0.1 api.desikau.local
-```
-
 ## ルート定義
 - ルーティング設定: bootstrap/app.php
 - ユーザールート: routes/user.php
 - 管理画面ルート: routes/admin.php
 - APIルート: routes/api.php
 - ※ routes/web.php は使用しない
+
+# Stripe決済
+
+## 環境変数設定
+`.env`ファイルに以下を追加:
+```
+STRIPE_KEY=pk_test_your_publishable_key
+STRIPE_SECRET=sk_test_your_secret_key
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+CASHIER_CURRENCY=jpy
+```
+
+## Stripe CLIコマンド
+- `make stripe-login` - Stripe CLIにログイン（初回のみ）
+- `make stripe-listen` - Webhookをローカルに転送開始
+- `make stripe-webhook` - Webhook Secret表示付きでリッスン開始
+
+## Webhook設定手順
+1. `make stripe-login` でStripeにログイン
+2. `make stripe-webhook` を実行
+3. 表示される `whsec_xxxxx` を `.env` の `STRIPE_WEBHOOK_SECRET` に設定
+4. 別ターミナルで開発サーバーを起動して決済テスト
+
+## 決済フロー
+1. `/checkout` - 購入確認画面
+2. 「注文を確定する」でStripe Checkoutセッション作成
+3. Stripeの決済ページにリダイレクト
+4. 決済完了後 `/checkout/success` にリダイレクト
+5. Webhookで支払い完了を確認、購入履歴作成
+
+## Custom Command Shortcuts
+- **strict-php**: `.claude/commands/strict-php.md` のルールに従って、コードを厳格な型定義に変換または生成する。

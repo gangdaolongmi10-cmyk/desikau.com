@@ -2,18 +2,22 @@
 
 /**
  * APIのルート定義
- * サブドメイン: api.desikau.local
+ * プレフィックス: /api
+ * ルート名プレフィックス: api.（bootstrap/app.phpで設定済み）
  */
 
 use Illuminate\Support\Facades\Route;
 
-Route::name('api.')->group(function () {
-    Route::get('/', function () {
-        return response()->json([
-            'status' => 'ok',
-            'message' => 'Welcome to Desikau API',
-        ]);
-    })->name('index');
+/*
+|--------------------------------------------------------------------------
+| APIエンドポイント
+|--------------------------------------------------------------------------
+*/
+Route::get('/', function () {
+    return response()->json([
+        'status' => 'ok',
+        'message' => 'Welcome to Desikau API',
+    ]);
+})->name('index');
 
-    // TODO: APIルートを追加
-});
+// TODO: APIルートを追加
