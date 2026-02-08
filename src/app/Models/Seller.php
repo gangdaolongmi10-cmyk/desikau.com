@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Str;
 
@@ -28,6 +29,7 @@ use Illuminate\Support\Str;
  *
  * @property-read User|null $user
  * @property-read \Illuminate\Database\Eloquent\Collection|Product[] $products
+ * @property-read SellerLegalInfo|null $legalInfo
  */
 class Seller extends Authenticatable
 {
@@ -104,6 +106,14 @@ class Seller extends Authenticatable
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    /**
+     * 特定商取引法に基づく表記を取得
+     */
+    public function legalInfo(): HasOne
+    {
+        return $this->hasOne(SellerLegalInfo::class);
     }
 
     /**

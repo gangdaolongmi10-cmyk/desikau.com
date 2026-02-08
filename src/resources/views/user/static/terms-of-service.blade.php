@@ -41,11 +41,5 @@
             <h2>第8条（準拠法・裁判管轄）</h2>
             <p>本規約の解釈にあたっては、日本法を準拠法とします。本サービスに関して紛争が生じた場合には、当社の本店所在地を管轄する裁判所を専属的合意管轄とします。</p>
         </div>
-
-        <div class="mt-8 text-center">
-            <a href="index.html" class="inline-flex items-center justify-center px-8 py-3 bg-gray-900 text-white font-bold rounded-2xl hover:bg-indigo-600 transition-all shadow-lg shadow-gray-200">
-                同意してトップページへ
-            </a>
-        </div>
     </div>
 </x-user.common>

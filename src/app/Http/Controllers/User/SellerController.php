@@ -22,6 +22,9 @@ final class SellerController extends Controller
      */
     public function detail(Seller $seller): View
     {
+        // 特定商取引法に基づく表記をeager load
+        $seller->load('legalInfo');
+
         // 出品者の公開商品を取得
         $products = $seller->products()
             ->where('status', ProductStatus::PUBLISHED)

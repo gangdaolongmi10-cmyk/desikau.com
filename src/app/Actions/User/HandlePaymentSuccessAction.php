@@ -2,6 +2,7 @@
 
 namespace App\Actions\User;
 
+use App\Actions\User\SendOrderMailsAction;
 use App\Models\Order;
 use App\Models\PurchaseHistory;
 use App\Models\User;
@@ -15,7 +16,8 @@ final class HandlePaymentSuccessAction
 {
     public function __construct(
         private readonly CartService $cartService,
-        private readonly StripeService $stripeService
+        private readonly StripeService $stripeService,
+        private readonly SendOrderMailsAction $sendOrderMailsAction
     ) {}
 
     /**
@@ -34,6 +36,7 @@ final class HandlePaymentSuccessAction
         if ($order->isPaid()) {
             $this->createPurchaseHistories($order);
             $this->cartService->clear($user);
+            $this->sendOrderMailsAction->execute($order);
         }
 
         $order->load('items.product');

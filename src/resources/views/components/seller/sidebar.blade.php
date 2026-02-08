@@ -20,6 +20,10 @@
             <i data-lucide="package" class="w-5 h-5"></i>
             <span>出品アイテム管理</span>
         </a>
+        <a href="{{ route('seller.legal-info.edit') }}" class="flex items-center space-x-3 {{ request()->routeIs('seller.legal-info.*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50' }} px-4 py-3 rounded-xl font-bold transition-all">
+            <i data-lucide="file-text" class="w-5 h-5"></i>
+            <span>特定商取引法に基づく表記</span>
+        </a>
         <a href="#" class="flex items-center space-x-3 text-gray-500 hover:bg-gray-50 px-4 py-3 rounded-xl font-medium transition-all">
             <i data-lucide="settings" class="w-5 h-5"></i>
             <span>設定</span>

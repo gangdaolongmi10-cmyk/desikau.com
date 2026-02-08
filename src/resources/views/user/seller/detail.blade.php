@@ -73,13 +73,22 @@
         </div>
     </section>
 
-    <!-- Category Filtering & Items -->
-    <section>
-        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 space-y-4 md:space-y-0">
-            <h3 class="text-xl font-bold">出品商品</h3>
-        </div>
+    {{-- タブ切り替え --}}
+    <div class="flex space-x-1 bg-white rounded-2xl border border-gray-100 shadow-sm p-1 mb-8">
+        <button id="tab-products" onclick="switchTab('products')" class="flex-1 flex items-center justify-center space-x-2 px-6 py-3 rounded-xl font-bold text-sm transition-all bg-indigo-600 text-white">
+            <i data-lucide="package" class="w-4 h-4"></i>
+            <span>出品商品</span>
+        </button>
+        @if ($seller->legalInfo)
+            <button id="tab-legal" onclick="switchTab('legal')" class="flex-1 flex items-center justify-center space-x-2 px-6 py-3 rounded-xl font-bold text-sm transition-all text-gray-500 hover:bg-gray-50">
+                <i data-lucide="file-text" class="w-4 h-4"></i>
+                <span>特定商取引法に基づく表記</span>
+            </button>
+        @endif
+    </div>
 
-        <!-- Product Grid -->
+    {{-- 出品商品タブ --}}
+    <section id="panel-products">
         @if ($products->count() > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach ($products as $product)
@@ -106,6 +115,56 @@
             </div>
         @endif
     </section>
+
+    {{-- 特定商取引法に基づく表記タブ --}}
+    @if ($seller->legalInfo)
+        <section id="panel-legal" class="hidden">
+            <div class="bg-white rounded-[32px] border border-gray-100 shadow-sm p-8">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <tbody class="divide-y divide-gray-100">
+                            <tr>
+                                <th class="text-left py-3 pr-4 text-gray-500 font-bold whitespace-nowrap w-40">販売業者</th>
+                                <td class="py-3 text-gray-900">{{ $seller->legalInfo->company_name }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-left py-3 pr-4 text-gray-500 font-bold whitespace-nowrap w-40">代表者</th>
+                                <td class="py-3 text-gray-900">{{ $seller->legalInfo->representative_name }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-left py-3 pr-4 text-gray-500 font-bold whitespace-nowrap w-40">所在地</th>
+                                <td class="py-3 text-gray-900">〒{{ $seller->legalInfo->postal_code }} {{ $seller->legalInfo->address }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-left py-3 pr-4 text-gray-500 font-bold whitespace-nowrap w-40">電話番号</th>
+                                <td class="py-3 text-gray-900">{{ $seller->legalInfo->phone_number }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-left py-3 pr-4 text-gray-500 font-bold whitespace-nowrap w-40">メールアドレス</th>
+                                <td class="py-3 text-gray-900">{{ $seller->legalInfo->email }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-left py-3 pr-4 text-gray-500 font-bold whitespace-nowrap w-40">販売価格</th>
+                                <td class="py-3 text-gray-900 whitespace-pre-line">{{ $seller->legalInfo->price_description }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-left py-3 pr-4 text-gray-500 font-bold whitespace-nowrap w-40">支払方法</th>
+                                <td class="py-3 text-gray-900 whitespace-pre-line">{{ $seller->legalInfo->payment_method }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-left py-3 pr-4 text-gray-500 font-bold whitespace-nowrap w-40">引渡し時期</th>
+                                <td class="py-3 text-gray-900 whitespace-pre-line">{{ $seller->legalInfo->delivery_period }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-left py-3 pr-4 text-gray-500 font-bold whitespace-nowrap w-40">返品・キャンセル</th>
+                                <td class="py-3 text-gray-900 whitespace-pre-line">{{ $seller->legalInfo->return_policy }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    @endif
     <!-- Notification Toast -->
     <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] hidden">
         <div class="bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 animate-slide-up">
@@ -115,6 +174,30 @@
     </div>
 
     <script>
+        /**
+         * タブを切り替え
+         */
+        function switchTab(tab) {
+            const tabs = ['products', 'legal'];
+            tabs.forEach(function(t) {
+                const btn = document.getElementById('tab-' + t);
+                const panel = document.getElementById('panel-' + t);
+                if (!btn || !panel) return;
+
+                if (t === tab) {
+                    btn.classList.add('bg-indigo-600', 'text-white');
+                    btn.classList.remove('text-gray-500', 'hover:bg-gray-50');
+                    panel.classList.remove('hidden');
+                } else {
+                    btn.classList.remove('bg-indigo-600', 'text-white');
+                    btn.classList.add('text-gray-500', 'hover:bg-gray-50');
+                    panel.classList.add('hidden');
+                }
+            });
+
+            lucide.createIcons();
+        }
+
         /**
          * プロフィールを共有
          */

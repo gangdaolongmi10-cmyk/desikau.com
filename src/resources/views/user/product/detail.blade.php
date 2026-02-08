@@ -24,7 +24,7 @@
                 <div>
                     <div class="flex items-center space-x-2 mb-4">
                         @if ($product->category)
-                            <span class="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">{{ $product->category->name }}</span>
+                            <a href="{{ route('user.product.index', ['category' => $product->category->slug]) }}" class="bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider hover:bg-indigo-100 transition-colors">{{ $product->category->name }}</a>
                         @endif
                         <span class="bg-gray-100 text-gray-500 text-xs font-medium px-3 py-1 rounded-full">デジタル限定</span>
                     </div>

@@ -32,65 +32,110 @@
     </div>
 </section>
 @endguest
-<footer class="bg-white border-t border-gray-200 pt-16 pb-8">
+<footer class="bg-gray-900 text-gray-300 pt-16 pb-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
-            {{-- ストア --}}
-            <div>
-                <h5 class="font-bold mb-4">ストア</h5>
-                <ul class="space-y-2 text-sm text-gray-600">
-                    <li><a href="{{ route('user.home.index') }}" class="hover:text-indigo-600 transition-colors">ホーム</a></li>
-                    <li><a href="{{ route('user.product.index') }}" class="hover:text-indigo-600 transition-colors">商品一覧</a></li>
-                    <li><a href="{{ route('user.product.index', ['sort' => 'newest']) }}" class="hover:text-indigo-600 transition-colors">新着コンテンツ</a></li>
-                    <li><a href="{{ route('user.cart.index') }}" class="hover:text-indigo-600 transition-colors">カート</a></li>
-                </ul>
+
+        {{-- ロゴ・プラットフォーム説明 --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
+            <div class="lg:col-span-1">
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="bg-indigo-500 p-1.5 rounded-lg">
+                        <i data-lucide="layers" class="text-white w-6 h-6"></i>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-white">{{ config('app.name') }}</span>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed mb-4">
+                    {{ config('app.name') }}は、クリエイターがデジタルコンテンツを販売できるマーケットプレイスです。<br>
+                    プラットフォーム運営者として、安全な取引環境を提供しています。
+                </p>
+                <p class="text-xs text-gray-500">
+                    運営: {{ config('app.name') }} Inc.
+                </p>
             </div>
 
-            {{-- アカウント --}}
-            <div>
-                <h5 class="font-bold mb-4">アカウント</h5>
-                <ul class="space-y-2 text-sm text-gray-600">
-                    @auth
-                        <li><a href="{{ route('user.profile.index') }}" class="hover:text-indigo-600 transition-colors">マイページ</a></li>
-                        <li><a href="{{ route('user.like.index') }}" class="hover:text-indigo-600 transition-colors">お気に入り</a></li>
-                        <li><a href="{{ route('user.purchase-history.index') }}" class="hover:text-indigo-600 transition-colors">購入履歴</a></li>
-                    @else
-                        <li><a href="{{ route('user.login.index') }}" class="hover:text-indigo-600 transition-colors">ログイン</a></li>
-                        <li><a href="{{ route('user.register.index') }}" class="hover:text-indigo-600 transition-colors">新規登録</a></li>
-                    @endauth
-                </ul>
-            </div>
+            {{-- リンクセクション --}}
+            <div class="lg:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-8">
+                {{-- ストア --}}
+                <div>
+                    <h5 class="font-bold text-white mb-4 text-sm">ストア</h5>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><a href="{{ route('user.home.index') }}" class="hover:text-indigo-400 transition-colors">ホーム</a></li>
+                        <li><a href="{{ route('user.product.index') }}" class="hover:text-indigo-400 transition-colors">商品一覧</a></li>
+                        <li><a href="{{ route('user.product.index', ['sort' => 'newest']) }}" class="hover:text-indigo-400 transition-colors">新着コンテンツ</a></li>
+                        <li><a href="{{ route('user.cart.index') }}" class="hover:text-indigo-400 transition-colors">カート</a></li>
+                    </ul>
+                </div>
 
-            {{-- 出品者向け --}}
-            <div>
-                <h5 class="font-bold mb-4">出品者向け</h5>
-                <ul class="space-y-2 text-sm text-gray-600">
-                    <li><a href="{{ route('user.seller.register.index') }}" class="hover:text-indigo-600 transition-colors">出品者登録</a></li>
-                </ul>
-            </div>
+                {{-- アカウント --}}
+                <div>
+                    <h5 class="font-bold text-white mb-4 text-sm">アカウント</h5>
+                    <ul class="space-y-2.5 text-sm">
+                        @auth
+                            <li><a href="{{ route('user.profile.index') }}" class="hover:text-indigo-400 transition-colors">マイページ</a></li>
+                            <li><a href="{{ route('user.like.index') }}" class="hover:text-indigo-400 transition-colors">お気に入り</a></li>
+                            <li><a href="{{ route('user.purchase-history.index') }}" class="hover:text-indigo-400 transition-colors">購入履歴</a></li>
+                        @else
+                            <li><a href="{{ route('user.login.index') }}" class="hover:text-indigo-400 transition-colors">ログイン</a></li>
+                            <li><a href="{{ route('user.register.index') }}" class="hover:text-indigo-400 transition-colors">新規登録</a></li>
+                        @endauth
+                    </ul>
+                </div>
 
-            {{-- サポート --}}
-            <div>
-                <h5 class="font-bold mb-4">サポート</h5>
-                <ul class="space-y-2 text-sm text-gray-600">
-                    <li><a href="{{ route('user.inquiry.index') }}" class="hover:text-indigo-600 transition-colors">お問い合わせ</a></li>
-                </ul>
-            </div>
+                {{-- 出品者向け --}}
+                <div>
+                    <h5 class="font-bold text-white mb-4 text-sm">出品者向け</h5>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><a href="{{ route('user.seller.register.index') }}" class="hover:text-indigo-400 transition-colors">出品者登録</a></li>
+                    </ul>
+                </div>
 
-            {{-- サイト情報 --}}
-            <div>
-                <h5 class="font-bold mb-4">サイト情報</h5>
-                <ul class="space-y-2 text-sm text-gray-600">
-                    <li><a href="{{ route('user.static.index', $StaticPage::PrivacyPolicy->value) }}" class="hover:text-indigo-600 transition-colors">プライバシーポリシー</a></li>
-                    <li><a href="{{ route('user.static.index', $StaticPage::TermsOfService->value) }}" class="hover:text-indigo-600 transition-colors">利用規約</a></li>
-                </ul>
+                {{-- サポート・法的情報 --}}
+                <div>
+                    <h5 class="font-bold text-white mb-4 text-sm">サポート</h5>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><a href="{{ route('user.inquiry.index') }}" class="hover:text-indigo-400 transition-colors">お問い合わせ</a></li>
+                        <li><a href="{{ route('user.static.index', $StaticPage::TermsOfService->value) }}" class="hover:text-indigo-400 transition-colors">利用規約</a></li>
+                        <li><a href="{{ route('user.static.index', $StaticPage::PrivacyPolicy->value) }}" class="hover:text-indigo-400 transition-colors">プライバシーポリシー</a></li>
+                        <li><a href="{{ route('user.static.index', $StaticPage::LegalNotice->value) }}" class="hover:text-indigo-400 transition-colors">特定商取引法に基づく表記</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-xs text-gray-400">
-            <p>&copy; {{ date('Y') }} {{ config('app.name') }} Inc. All rights reserved.</p>
-            <div class="flex space-x-6">
-                <a href="{{ route('user.static.index', $StaticPage::LegalNotice->value) }}" class="hover:text-indigo-600 transition-colors">特定商取引法に基づく表記</a>
+
+        {{-- 運営者情報 --}}
+        <div class="border-t border-gray-800 pt-8 mb-8">
+            <div class="bg-gray-800/50 rounded-xl p-6">
+                <h6 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                    <i data-lucide="building-2" class="w-4 h-4 text-indigo-400"></i>
+                    プラットフォーム運営者情報
+                </h6>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs text-gray-400">
+                    <div>
+                        <span class="text-gray-500">運営者名</span>
+                        <p class="mt-0.5">{{ config('app.name') }} Inc.</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">お問い合わせ</span>
+                        <p class="mt-0.5">
+                            <a href="{{ route('user.inquiry.index') }}" class="hover:text-indigo-400 transition-colors">お問い合わせフォーム</a>
+                        </p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">サービス形態</span>
+                        <p class="mt-0.5">デジタルコンテンツマーケットプレイス</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">決済方法</span>
+                        <p class="mt-0.5">クレジットカード（Visa / Mastercard / AMEX / JCB）</p>
+                    </div>
+                </div>
             </div>
+        </div>
+
+        {{-- コピーライト --}}
+        <div class="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0 text-xs text-gray-500">
+            <p>&copy; {{ date('Y') }} {{ config('app.name') }} Inc. All rights reserved.</p>
+            <p>当サイトはプラットフォーム型のマーケットプレイスです。各商品の販売責任は出品者に帰属します。</p>
         </div>
     </div>
 </footer>

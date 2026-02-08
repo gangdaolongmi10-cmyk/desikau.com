@@ -35,7 +35,11 @@
     </div>
     <div class="p-5">
         <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">{{ $category }}</span>
+            @if($categorySlug)
+                <a href="{{ route('user.product.index', ['category' => $categorySlug]) }}" class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest hover:text-indigo-800 transition-colors">{{ $category }}</a>
+            @else
+                <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">{{ $category }}</span>
+            @endif
             @if($rating)
                 <div class="flex items-center text-orange-400">
                     <i data-lucide="star" class="w-3 h-3 fill-current"></i>
