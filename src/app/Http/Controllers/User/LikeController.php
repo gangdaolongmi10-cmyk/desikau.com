@@ -31,31 +31,7 @@ final class LikeController extends Controller
         $categorySlug = $request->query('category');
         $sort = SortOrder::fromString($request->query('sort'));
 
-        // お気に入り商品のクエリを構築
-        $query = $user->likedProducts()
-            ->with(['category', 'seller']);
-
-        // カテゴリーで絞り込み
-        if ($categorySlug) {
-            $query->whereHas('category', function ($q) use ($categorySlug) {
-                $q->where('slug', $categorySlug);
-            });
-        }
-
-        // ソート
-        if ($sort === SortOrder::OLDEST) {
-            $query->orderByPivot('created_at', 'asc');
-        } else {
-            $query->orderByPivot('created_at', 'desc');
-        }
-
-        $products = $query->paginate(12)->withQueryString();
-
-        // いいね状態を付与（全てtrue）
-        foreach ($products as $product) {
-            $product->liked_by_me = true;
-        }
-
+        $products = $this->productRepository->getLikedProductsByUser($user, $categorySlug, $sort);
         $categories = $this->categoryRepository->getList();
         $sortOptions = SortOrder::cases();
 

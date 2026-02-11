@@ -1,4 +1,4 @@
-{{-- 出品者画面共通レイアウト --}}
+{{-- 管理画面共通レイアウト --}}
 @props([
     'title' => 'ダッシュボード',
 ])
@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title }} - {{ config('app.name') }} Seller</title>
+    <title>{{ $title }} - {{ config('app.name') }} 管理画面</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -19,9 +19,9 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
-    <x-seller.sidebar />
+    <x-admin.sidebar />
     <main class="lg:ml-64 min-h-screen">
-        <x-seller.header :title="$title" />
+        <x-admin.header :title="$title" />
         <div class="p-4 lg:p-8 space-y-8">
             {{ $slot }}
         </div>

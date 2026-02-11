@@ -39,8 +39,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'seller.auto-login' => \App\Http\Middleware\AutoLoginSeller::class,
         ]);
 
-        // 未認証ユーザーのリダイレクト先を設定
-        $middleware->redirectGuestsTo('/login');
+        // 未認証ユーザーのリダイレクト先を設定（フラッシュメッセージ付き）
+        $middleware->redirectGuestsTo(function () {
+            session()->flash('warning', 'この機能を利用するにはログインが必要です。');
+            return '/login';
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

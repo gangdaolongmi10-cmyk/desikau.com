@@ -30,4 +30,14 @@ final class CategoryRepository
             ->orderBy('sort_no')
             ->get();
     }
+
+    /**
+     * 全カテゴリーを取得
+     *
+     * @return Collection<int, Category>
+     */
+    public function getAll(): Collection
+    {
+        return Category::all();
+    }
 }

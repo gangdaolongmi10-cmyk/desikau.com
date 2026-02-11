@@ -39,7 +39,7 @@
         /**
          * カートに商品を追加
          */
-        function addToCart(productId) {
+        function addToCart(productId, quantity = 1) {
             fetch('{{ route("user.cart.add") }}', {
                 method: 'POST',
                 headers: {
@@ -47,7 +47,7 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'Accept': 'application/json',
                 },
-                body: JSON.stringify({ product_id: productId }),
+                body: JSON.stringify({ product_id: productId, quantity: quantity }),
             })
             .then(response => response.json())
             .then(data => {

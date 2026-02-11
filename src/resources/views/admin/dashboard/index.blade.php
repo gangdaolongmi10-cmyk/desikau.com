@@ -1,46 +1,41 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理画面 - {{ config('app.name') }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-    <div class="min-h-screen flex">
-        <!-- サイドバー -->
-        <aside class="w-64 bg-gray-900 text-white">
-            <div class="p-6">
-                <h1 class="text-xl font-bold">{{ config('app.name') }}</h1>
-                <p class="text-gray-400 text-sm">管理画面</p>
+<x-admin.common title="ダッシュボード">
+    {{-- サマリーカード --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div class="flex items-center space-x-3 mb-3">
+                <div class="bg-indigo-100 p-2.5 rounded-xl">
+                    <i data-lucide="banknote" class="w-5 h-5 text-indigo-600"></i>
+                </div>
+                <span class="text-sm text-gray-500 font-medium">本日の売上</span>
             </div>
-            <nav class="mt-6">
-                <a href="#" class="block px-6 py-3 bg-gray-800 text-white">ダッシュボード</a>
-                <a href="#" class="block px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white">商品管理</a>
-                <a href="#" class="block px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white">注文管理</a>
-                <a href="#" class="block px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white">ユーザー管理</a>
-                <a href="#" class="block px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white">設定</a>
-            </nav>
-        </aside>
-
-        <!-- メインコンテンツ -->
-        <main class="flex-1 p-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">ダッシュボード</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-gray-500 text-sm">本日の売上</h3>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">¥0</p>
+            <p class="text-2xl font-bold">&yen;{{ number_format($todaySales) }}</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div class="flex items-center space-x-3 mb-3">
+                <div class="bg-green-100 p-2.5 rounded-xl">
+                    <i data-lucide="shopping-cart" class="w-5 h-5 text-green-600"></i>
                 </div>
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-gray-500 text-sm">本日の注文数</h3>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">0</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-gray-500 text-sm">登録ユーザー数</h3>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">0</p>
-                </div>
+                <span class="text-sm text-gray-500 font-medium">本日の注文数</span>
             </div>
-        </main>
+            <p class="text-2xl font-bold">{{ number_format($todayOrders) }}</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div class="flex items-center space-x-3 mb-3">
+                <div class="bg-purple-100 p-2.5 rounded-xl">
+                    <i data-lucide="users" class="w-5 h-5 text-purple-600"></i>
+                </div>
+                <span class="text-sm text-gray-500 font-medium">登録ユーザー数</span>
+            </div>
+            <p class="text-2xl font-bold">{{ number_format($totalUsers) }}</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div class="flex items-center space-x-3 mb-3">
+                <div class="bg-orange-100 p-2.5 rounded-xl">
+                    <i data-lucide="megaphone" class="w-5 h-5 text-orange-600"></i>
+                </div>
+                <span class="text-sm text-gray-500 font-medium">公開中のお知らせ</span>
+            </div>
+            <p class="text-2xl font-bold">{{ number_format($publishedAnnouncements) }}</p>
+        </div>
     </div>
-</body>
-</html>
+</x-admin.common>

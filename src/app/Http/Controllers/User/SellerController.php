@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Enums\ProductStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Seller;
 use App\Repositories\ProductRepository;
+use App\Repositories\SellerRepository;
 use Illuminate\Contracts\View\View;
 
 /**
@@ -14,7 +14,8 @@ use Illuminate\Contracts\View\View;
 final class SellerController extends Controller
 {
     public function __construct(
-        private readonly ProductRepository $productRepository
+        private readonly ProductRepository $productRepository,
+        private readonly SellerRepository $sellerRepository
     ) {}
 
     /**
@@ -22,17 +23,8 @@ final class SellerController extends Controller
      */
     public function detail(Seller $seller): View
     {
-        // 特定商取引法に基づく表記をeager load
-        $seller->load('legalInfo');
-
-        // 出品者の公開商品を取得
-        $products = $seller->products()
-            ->where('status', ProductStatus::PUBLISHED)
-            ->with('category')
-            ->orderByDesc('created_at')
-            ->get();
-
-        // いいね状態を付与
+        $seller = $this->sellerRepository->loadWithLegalInfo($seller);
+        $products = $this->productRepository->getPublishedBySeller($seller);
         $products = $this->productRepository->attachLikedByMe($products);
 
         return view('user.seller.detail', compact('seller', 'products'));

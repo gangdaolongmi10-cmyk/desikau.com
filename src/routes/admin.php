@@ -6,6 +6,9 @@
  * ルート名プレフィックス: admin.（bootstrap/app.phpで設定済み）
  */
 
+use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,8 +16,10 @@ use Illuminate\Support\Facades\Route;
 | ダッシュボード
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return view('admin.dashboard.index');
-})->name('dashboard.index');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
 
-// TODO: 管理画面のルートを追加
+// ユーザー管理
+Route::get('user', [UserController::class, 'index'])->name('user.index');
+
+// お知らせ管理
+Route::resource('announcement', AnnouncementController::class)->except(['show']);

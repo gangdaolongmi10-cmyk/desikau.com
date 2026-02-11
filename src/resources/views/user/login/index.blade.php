@@ -30,6 +30,14 @@
                     @csrf
                     <input type="hidden" name="login_type" id="login-type-input" value="{{ old('login_type', Role::USER->value) }}">
 
+                    {{-- フラッシュメッセージ --}}
+                    @if (session('warning'))
+                        <div class="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-2xl text-sm flex items-center gap-2">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 flex-shrink-0"></i>
+                            <p>{{ session('warning') }}</p>
+                        </div>
+                    @endif
+
                     {{-- エラーメッセージ --}}
                     @if ($errors->any())
                         <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm">
@@ -75,12 +83,7 @@
                         <img src="https://www.google.com/favicon.ico" class="w-4 h-4" alt="Google">
                         <span>Google</span>
                     </button>
-                    <button class="flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl border border-gray-200 hover:bg-gray-50 transition-all font-medium text-sm">
-                        <i data-lucide="github" class="w-4 h-4 text-gray-900"></i>
-                        <span>GitHub</span>
-                    </button>
                 </div>
-
                 <p class="mt-10 text-center text-sm text-gray-500" id="register-link">
                     アカウントをお持ちでないですか？
                     <a href="{{ route('user.register.index') }}" class="text-indigo-600 font-bold hover:underline">新規登録</a>

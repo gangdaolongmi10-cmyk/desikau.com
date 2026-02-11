@@ -3,8 +3,10 @@
 namespace App\Repositories;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -109,6 +111,76 @@ final class OrderRepository
             'sales_change' => $this->calculateChangePercent($currentStats->total_sales, $lastStats->total_sales),
             'order_change' => $this->calculateChangePercent($currentStats->order_count, $lastStats->order_count),
         ];
+    }
+
+    /**
+     * 出品者の最近の売上（注文アイテム）を取得
+     *
+     * @param int $sellerId 出品者ID
+     * @param int $limit 取得件数
+     * @return Collection<int, OrderItem>
+     */
+    public function getRecentSalesBySeller(int $sellerId, int $limit = 10): Collection
+    {
+        return OrderItem::with(['order', 'product'])
+            ->whereHas('product', function ($query) use ($sellerId) {
+                $query->where('seller_id', $sellerId);
+            })
+            ->whereHas('order', function ($query) {
+                $query->whereIn('status', [Order::STATUS_PAID, Order::STATUS_PENDING]);
+            })
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * 出品者の売上をページネーションで取得
+     *
+     * @param int $sellerId 出品者ID
+     * @param Carbon|null $startDate 開始日
+     * @param Carbon|null $endDate 終了日
+     * @param int $perPage 1ページあたりの件数
+     * @return LengthAwarePaginator
+     */
+    public function getSalesBySellerPaginated(
+        int $sellerId,
+        ?Carbon $startDate,
+        ?Carbon $endDate,
+        int $perPage = 20
+    ): LengthAwarePaginator {
+        $query = OrderItem::with(['order', 'product'])
+            ->whereHas('product', function ($q) use ($sellerId) {
+                $q->where('seller_id', $sellerId);
+            })
+            ->whereHas('order', function ($q) use ($startDate, $endDate) {
+                $q->where('status', Order::STATUS_PAID);
+                if ($startDate && $endDate) {
+                    $q->whereBetween('paid_at', [$startDate, $endDate]);
+                }
+            })
+            ->orderByDesc('created_at');
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * 出品者の全期間累計売上額を取得
+     *
+     * @param int $sellerId 出品者ID
+     * @return int 累計売上額
+     */
+    public function getTotalSalesBySeller(int $sellerId): int
+    {
+        $result = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('products.seller_id', $sellerId)
+            ->where('orders.status', Order::STATUS_PAID)
+            ->selectRaw('COALESCE(SUM(order_items.price * order_items.quantity), 0) as total')
+            ->first();
+
+        return (int) $result->total;
     }
 
     /**

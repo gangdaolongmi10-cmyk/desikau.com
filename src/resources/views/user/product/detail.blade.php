@@ -53,8 +53,22 @@
 
                 <!-- Action Buttons -->
                 <div class="mt-auto space-y-4 pt-8 border-t border-gray-100">
+                    {{-- 数量選択 --}}
+                    <div class="flex items-center space-x-4">
+                        <label for="quantity" class="text-sm font-bold text-gray-700">数量</label>
+                        <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden">
+                            <button type="button" onclick="changeQuantity(-1)" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
+                                <i data-lucide="minus" class="w-4 h-4"></i>
+                            </button>
+                            <input type="number" id="quantity" value="1" min="1" max="99" readonly class="w-12 h-10 text-center font-bold text-gray-900 border-x border-gray-200 bg-white text-sm">
+                            <button type="button" onclick="changeQuantity(1)" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="flex space-x-4">
-                        <button onclick="addToCart({{ $product->id }})" class="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 flex items-center justify-center space-x-2 active:scale-[0.98]">
+                        <button onclick="addToCart({{ $product->id }}, getQuantity())" class="flex-1 bg-indigo-600 text-white py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 flex items-center justify-center space-x-2 active:scale-[0.98]">
                             <i data-lucide="shopping-cart" class="w-5 h-5"></i>
                             <span>カートに追加する</span>
                         </button>
@@ -354,6 +368,23 @@
     </div>
 
     <script>
+        /**
+         * 数量を取得
+         */
+        function getQuantity() {
+            return parseInt(document.getElementById('quantity').value) || 1;
+        }
+
+        /**
+         * 数量を増減
+         */
+        function changeQuantity(delta) {
+            const input = document.getElementById('quantity');
+            const current = parseInt(input.value) || 1;
+            const next = Math.min(99, Math.max(1, current + delta));
+            input.value = next;
+        }
+
         /**
          * 評価の星をセット
          */

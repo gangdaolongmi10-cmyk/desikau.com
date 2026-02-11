@@ -18,7 +18,7 @@ final class GetSellerDashboardAction
     /**
      * ダッシュボード表示に必要なデータを取得
      *
-     * @return array{monthlySales: int, orderCount: int, salesChange: float, orderChange: float, averageRating: float|null, reviewCount: int}
+     * @return array{monthlySales: int, orderCount: int, salesChange: float, orderChange: float, averageRating: float|null, reviewCount: int, recentSales: \Illuminate\Database\Eloquent\Collection}
      */
     public function execute(Seller $seller): array
     {
@@ -31,6 +31,8 @@ final class GetSellerDashboardAction
         $averageRating = (clone $reviewQuery)->avg('rating');
         $reviewCount = (clone $reviewQuery)->count();
 
+        $recentSales = $this->orderRepository->getRecentSalesBySeller($seller->id);
+
         return [
             'monthlySales' => $monthlyStats['sales'],
             'orderCount' => $monthlyStats['order_count'],
@@ -38,6 +40,7 @@ final class GetSellerDashboardAction
             'orderChange' => $monthlyStats['order_change'],
             'averageRating' => $averageRating ? round($averageRating, 1) : null,
             'reviewCount' => $reviewCount,
+            'recentSales' => $recentSales,
         ];
     }
 }

@@ -8,9 +8,10 @@ use App\Actions\Seller\UpdateProductAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Seller\ProductStoreRequest;
 use App\Http\Requests\Seller\ProductUpdateRequest;
-use App\Models\Category;
 use App\Models\Product;
 use App\Models\Seller;
+use App\Repositories\CategoryRepository;
+use App\Repositories\ProductRepository;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -21,6 +22,11 @@ use Illuminate\View\View;
  */
 class ProductController extends Controller
 {
+    public function __construct(
+        private readonly ProductRepository $productRepository,
+        private readonly CategoryRepository $categoryRepository
+    ) {}
+
     /**
      * 現在のSellerユーザーを取得
      */
@@ -44,11 +50,7 @@ class ProductController extends Controller
     {
         $this->authorizeForSeller('viewAny', Product::class);
 
-        $seller = $this->seller();
-        $products = Product::where('seller_id', $seller->id)
-            ->with('category')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $products = $this->productRepository->getBySellerPaginated($this->seller()->id);
 
         return view('seller.product.index', compact('products'));
     }
@@ -60,7 +62,7 @@ class ProductController extends Controller
     {
         $this->authorizeForSeller('create', Product::class);
 
-        $categories = Category::all();
+        $categories = $this->categoryRepository->getAll();
 
         return view('seller.product.create', compact('categories'));
     }
@@ -90,7 +92,7 @@ class ProductController extends Controller
     {
         $this->authorizeForSeller('update', $product);
 
-        $categories = Category::all();
+        $categories = $this->categoryRepository->getAll();
 
         return view('seller.product.edit', compact('product', 'categories'));
     }

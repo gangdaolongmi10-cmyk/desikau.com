@@ -45,4 +45,14 @@ class SellerRepository
     {
         return Seller::where('email', $email)->first();
     }
+
+    /**
+     * 出品者に特定商取引法情報をeager loadして返す
+     */
+    public function loadWithLegalInfo(Seller $seller): Seller
+    {
+        $seller->load('legalInfo');
+
+        return $seller;
+    }
 }

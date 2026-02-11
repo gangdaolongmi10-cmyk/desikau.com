@@ -27,6 +27,10 @@ final class HomeController extends Controller
         $products = $this->productRepository->attachLikedByMe($products);
         $categories = $this->categoryRepository->getList();
 
+        // 売上ランキング商品を取得
+        $rankedProducts = $this->productRepository->getRankedProducts();
+        $rankedProducts = $this->productRepository->attachLikedByMe($rankedProducts);
+
         // お気に入り商品を取得（ログイン時のみ、最大4件）
         $likedProducts = collect();
         if (Auth::check()) {
@@ -44,6 +48,6 @@ final class HomeController extends Controller
             }
         }
 
-        return view('user.home.index', compact('products', 'categories', 'likedProducts'));
+        return view('user.home.index', compact('products', 'categories', 'likedProducts', 'rankedProducts'));
     }
 }

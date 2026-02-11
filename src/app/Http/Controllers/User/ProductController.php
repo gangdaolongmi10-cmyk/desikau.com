@@ -4,9 +4,9 @@ namespace App\Http\Controllers\User;
 
 use App\Enums\SortOrder;
 use App\Http\Controllers\Controller;
-use App\Models\Review;
 use App\Repositories\CategoryRepository;
 use App\Repositories\ProductRepository;
+use App\Repositories\ReviewRepository;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +18,8 @@ final class ProductController extends Controller
 {
     public function __construct(
         private readonly ProductRepository $productRepository,
-        private readonly CategoryRepository $categoryRepository
+        private readonly CategoryRepository $categoryRepository,
+        private readonly ReviewRepository $reviewRepository
     ) {}
 
     /**
@@ -52,14 +53,8 @@ final class ProductController extends Controller
         $relatedProducts = $this->productRepository->getRelatedProducts($product);
         $relatedProducts = $this->productRepository->attachLikedByMe($relatedProducts);
 
-        // レビュー一覧を取得（新しい順）
-        $reviews = $product->reviews()
-            ->with('user')
-            ->orderByDesc('created_at')
-            ->get();
-
-        // レビュー統計を計算
-        $reviewStats = $this->calculateReviewStats($reviews);
+        $reviews = $this->reviewRepository->getByProduct($product);
+        $reviewStats = $this->reviewRepository->calculateStats($reviews);
 
         // ログインユーザーが既にレビュー済みか確認
         $userReview = null;
@@ -68,47 +63,5 @@ final class ProductController extends Controller
         }
 
         return view('user.product.detail', compact('product', 'relatedProducts', 'reviews', 'reviewStats', 'userReview'));
-    }
-
-    /**
-     * レビュー統計を計算
-     *
-     * @param \Illuminate\Database\Eloquent\Collection $reviews
-     * @return array{average: float, count: int, distribution: array<int, array{count: int, percentage: int}>}
-     */
-    private function calculateReviewStats($reviews): array
-    {
-        $count = $reviews->count();
-
-        if ($count === 0) {
-            return [
-                'average' => 0,
-                'count' => 0,
-                'distribution' => [
-                    5 => ['count' => 0, 'percentage' => 0],
-                    4 => ['count' => 0, 'percentage' => 0],
-                    3 => ['count' => 0, 'percentage' => 0],
-                    2 => ['count' => 0, 'percentage' => 0],
-                    1 => ['count' => 0, 'percentage' => 0],
-                ],
-            ];
-        }
-
-        $average = round($reviews->avg('rating'), 1);
-
-        $distribution = [];
-        for ($i = 5; $i >= 1; $i--) {
-            $ratingCount = $reviews->where('rating', $i)->count();
-            $distribution[$i] = [
-                'count' => $ratingCount,
-                'percentage' => round(($ratingCount / $count) * 100),
-            ];
-        }
-
-        return [
-            'average' => $average,
-            'count' => $count,
-            'distribution' => $distribution,
-        ];
     }
 }
