@@ -48,12 +48,10 @@ final class SendOrderMailsAction
      */
     private function sendNotificationMails(Order $order): void
     {
-        /** @var \Illuminate\Support\Collection $sellerGroups 出品者ごとにグループ化した注文アイテム */
-        $sellerGroups = $order->items->groupBy(function ($item) {
-            return $item->product?->seller_id;
-        })->filter(function ($items, $sellerId) {
-            return $sellerId !== null;
-        });
+        /** @var \Illuminate\Support\Collection<int, \Illuminate\Support\Collection<int, \App\Models\OrderItem>> $sellerGroups 出品者ごとにグループ化した注文アイテム */
+        $sellerGroups = $order->items
+            ->groupBy(fn (\App\Models\OrderItem $item) => $item->product?->seller_id)
+            ->filter(fn ($items, $sellerId) => !empty($sellerId));
 
         foreach ($sellerGroups as $sellerId => $items) {
             $seller = $items->first()->product->seller;

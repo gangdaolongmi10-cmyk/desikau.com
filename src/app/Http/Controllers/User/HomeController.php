@@ -43,6 +43,7 @@ final class HomeController extends Controller
                 ->get();
 
             // いいね状態を付与（全てtrue）
+            /** @var \App\Models\Product $product */
             foreach ($likedProducts as $product) {
                 $product->liked_by_me = true;
             }

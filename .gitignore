@@ -1,6 +1,10 @@
 # 環境変数
 .env
 
+# Node.js (root)
+node_modules/
+package-lock.json
+
 # データディレクトリ
 data/db/*
 data/storage/*
@@ -9,7 +13,9 @@ data/storage/*
 
 # IDE
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 *.swp
 *.swo
 
@@ -27,3 +33,8 @@ src/storage/logs/*
 src/.composer
 src/vendor
 src/.env
+
+# IDE Helper
+src/_ide_helper.php
+src/_ide_helper_models.php
+src/.phpstorm.meta.php

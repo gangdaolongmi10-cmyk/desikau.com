@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Storage;
  * @property int $likes_count
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property bool $liked_by_me 動的プロパティ: ユーザーがいいね済みかどうか
  *
  * @property-read Seller|null $seller
  * @property-read Category|null $category

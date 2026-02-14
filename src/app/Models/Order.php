@@ -22,6 +22,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Carbon\Carbon|null $paid_at
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ *
+ * @property-read User $user
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, OrderItem> $items
  */
 class Order extends Model
 {

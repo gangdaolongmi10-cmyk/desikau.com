@@ -17,7 +17,7 @@ class Inquiry extends Model
     /**
      * 一括代入可能な属性
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'user_id',

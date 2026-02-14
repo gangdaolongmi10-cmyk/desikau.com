@@ -91,7 +91,7 @@ class StripeService
                 'cancel_url' => route('user.checkout.cancel'),
                 'customer_email' => $user->email,
                 'metadata' => [
-                    'order_id' => $order->id,
+                    'order_id' => (string) $order->id,
                     'order_number' => $order->order_number,
                 ],
                 'locale' => 'ja',
@@ -224,7 +224,7 @@ class StripeService
                     'currency' => 'jpy',
                     'product_data' => [
                         'name' => $item->product->name,
-                        'description' => $item->product->seller?->shop_name ?? '',
+                        'description' => $item->product->seller->shop_name ?? '',
                         'images' => $item->product->image_url ? [$item->product->image_url] : [],
                     ],
                     'unit_amount' => $item->product->price,

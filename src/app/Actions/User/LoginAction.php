@@ -46,13 +46,16 @@ final class LoginAction
         session()->regenerate();
 
         // 出品者情報が紐づいていれば同時ログイン
-        $seller = Auth::user()->seller;
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        /** @var \App\Models\Seller|null $seller */
+        $seller = $user->seller;
         if ($seller) {
             Auth::guard('seller')->login($seller, $remember);
         }
 
         // ゲストカートをマージ
-        $this->cartService->mergeGuestCart(Auth::user());
+        $this->cartService->mergeGuestCart($user);
 
         return [
             'success' => true,
@@ -79,7 +82,10 @@ final class LoginAction
         session()->regenerate();
 
         // 紐づくユーザーが存在すれば同時ログイン
-        $user = Auth::guard('seller')->user()->user;
+        /** @var \App\Models\Seller $seller */
+        $seller = Auth::guard('seller')->user();
+        /** @var \App\Models\User|null $user */
+        $user = $seller->user;
         if ($user) {
             Auth::login($user, $remember);
             $this->cartService->mergeGuestCart($user);

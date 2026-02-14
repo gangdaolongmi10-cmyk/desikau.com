@@ -1,0 +1,19 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+
+    # レベル設定（0-9、厳しさが増す）
+    # 開始は5を推奨、慣れたら徐々に上げる
+    level: 5
+
+    ignoreErrors:
+        # 必要に応じて特定のエラーを無視
+        # - '#Call to an undefined method#'
+
+    excludePaths:
+        - ./vendor/*
+        - ./bootstrap/cache/*
+        - ./storage/*
