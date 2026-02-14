@@ -23,6 +23,12 @@ use Illuminate\Support\Str;
  * @property string|null $twitter_username
  * @property string|null $youtube_url
  * @property string|null $twitch_username
+ * @property string|null $postal_code
+ * @property string|null $prefecture
+ * @property string|null $city
+ * @property string|null $address
+ * @property string|null $building
+ * @property string|null $phone_number
  * @property string|null $remember_token
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
@@ -90,6 +96,12 @@ class Seller extends Authenticatable
         'twitter_username',
         'youtube_url',
         'twitch_username',
+        'postal_code',
+        'prefecture',
+        'city',
+        'address',
+        'building',
+        'phone_number',
     ];
 
     /**

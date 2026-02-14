@@ -22,6 +22,14 @@ final class UpdateSellerSettingsAction
         $seller->youtube_url = $validated['youtube_url'] ?? null;
         $seller->twitch_username = $validated['twitch_username'] ?? null;
 
+        // 住所・電話番号情報
+        $seller->postal_code = $validated['postal_code'] ?? null;
+        $seller->prefecture = $validated['prefecture'] ?? null;
+        $seller->city = $validated['city'] ?? null;
+        $seller->address = $validated['address'] ?? null;
+        $seller->building = $validated['building'] ?? null;
+        $seller->phone_number = $validated['phone_number'] ?? null;
+
         // パスワードが入力されている場合のみ更新
         if (!empty($validated['password'])) {
             $seller->password = Hash::make($validated['password']);
