@@ -18,17 +18,20 @@ final class ReviewRepository
      */
     public function getByProduct(Product $product): Collection
     {
-        return $product->reviews()
+        /** @var Collection<int, Review> $reviews */
+        $reviews = $product->reviews()
             ->with('user')
             ->orderByDesc('created_at')
             ->get();
+
+        return $reviews;
     }
 
     /**
      * レビュー統計を計算
      *
      * @param Collection<int, Review> $reviews
-     * @return array{average: float, count: int, distribution: array<int, array{count: int, percentage: int}>}
+     * @return array{average: float, count: int, distribution: array<int, array{count: int, percentage: float}>}
      */
     public function calculateStats(Collection $reviews): array
     {
@@ -36,14 +39,14 @@ final class ReviewRepository
 
         if ($count === 0) {
             return [
-                'average' => 0,
+                'average' => 0.0,
                 'count' => 0,
                 'distribution' => [
-                    5 => ['count' => 0, 'percentage' => 0],
-                    4 => ['count' => 0, 'percentage' => 0],
-                    3 => ['count' => 0, 'percentage' => 0],
-                    2 => ['count' => 0, 'percentage' => 0],
-                    1 => ['count' => 0, 'percentage' => 0],
+                    5 => ['count' => 0, 'percentage' => 0.0],
+                    4 => ['count' => 0, 'percentage' => 0.0],
+                    3 => ['count' => 0, 'percentage' => 0.0],
+                    2 => ['count' => 0, 'percentage' => 0.0],
+                    1 => ['count' => 0, 'percentage' => 0.0],
                 ],
             ];
         }
@@ -55,7 +58,7 @@ final class ReviewRepository
             $ratingCount = $reviews->where('rating', $i)->count();
             $distribution[$i] = [
                 'count' => $ratingCount,
-                'percentage' => round(($ratingCount / $count) * 100),
+                'percentage' => round(($ratingCount / $count) * 100, 1),
             ];
         }
 

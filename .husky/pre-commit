@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+
+echo "🔍 Running Larastan static analysis..."
+
+# Dockerコンテナが起動しているか確認
+if ! docker-compose ps app 2>/dev/null | grep -q "Up"; then
+    echo "⚠️  Docker container 'app' is not running."
+    echo "Please start the container with: make up"
+    exit 1
+fi
+
+# Larastan実行（-T オプションで非対話モード）
+docker-compose exec -T app ./vendor/bin/phpstan analyse --memory-limit=1G
+
+# 終了コードを保存
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo "❌ Larastan found errors. Please fix them before committing."
+    exit 1
+fi
+
+echo "✅ Larastan check passed!"
+exit 0

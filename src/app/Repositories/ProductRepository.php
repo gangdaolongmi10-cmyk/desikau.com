@@ -199,6 +199,7 @@ class ProductRepository
         $products = $query->paginate($perPage)->withQueryString();
 
         // お気に入り一覧なのでいいね状態は全てtrue
+        /** @var Product $product */
         foreach ($products as $product) {
             $product->liked_by_me = true;
         }
@@ -214,11 +215,14 @@ class ProductRepository
      */
     public function getPublishedBySeller(Seller $seller): Collection
     {
-        return $seller->products()
+        /** @var Collection<int, Product> $products */
+        $products = $seller->products()
             ->where('status', ProductStatus::PUBLISHED)
             ->with('category')
             ->orderByDesc('created_at')
             ->get();
+
+        return $products;
     }
 
     /**

@@ -37,7 +37,7 @@ final class CategoryFilter extends Component
     /**
      * コンポーネントのビューを取得
      */
-    public function render(): View|Closure|string
+    public function render(): View
     {
         return view('components.user.ui.category-filter');
     }

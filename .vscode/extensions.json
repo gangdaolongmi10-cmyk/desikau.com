@@ -1,0 +1,29 @@
+{
+    "recommendations": [
+        // PHP開発必須
+        "bmewburn.vscode-intelephense-client",
+
+        // Laravel開発
+        "amiralizadeh9480.laravel-extra-intellisense",
+        "onecentlin.laravel-blade",
+        "onecentlin.laravel5-snippets",
+
+        // TailwindCSS
+        "bradlc.vscode-tailwindcss",
+
+        // Docker
+        "ms-azuretools.vscode-docker",
+
+        // Git
+        "eamodio.gitlens",
+
+        // その他便利なツール
+        "editorconfig.editorconfig",
+        "mikestead.dotenv"
+    ],
+    "unwantedRecommendations": [
+        // 競合する可能性のある拡張機能
+        "felixfbecker.php-intellisense",
+        "felixfbecker.php-debug"
+    ]
+}

@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $quantity
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ *
+ * @property-read Order $order
+ * @property-read Product|null $product
  */
 class OrderItem extends Model
 {

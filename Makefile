@@ -1,4 +1,4 @@
-.PHONY: build up down restart logs ps shell shell-db npm artisan composer fresh stripe-listen stripe-webhook stripe-trigger
+.PHONY: build up down restart logs ps shell shell-db npm artisan composer fresh stripe-listen stripe-webhook stripe-trigger larastan ide-helper
 
 # 現在のユーザーのUID/GIDを取得
 export UID := $(shell id -u)
@@ -59,6 +59,17 @@ init-laravel:
 # テスト実行
 test:
 	docker-compose exec app php artisan test
+
+# Larastan静的解析実行
+larastan:
+	docker-compose exec -T app ./vendor/bin/phpstan analyse --memory-limit=1G
+
+# IDE Helperファイル生成
+ide-helper:
+	docker-compose exec -T app php artisan ide-helper:generate
+	docker-compose exec -T app php artisan ide-helper:models --nowrite
+	docker-compose exec -T app php artisan ide-helper:meta
+	@echo "✅ IDE Helper files generated!"
 
 # Vite開発サーバー起動
 dev:
