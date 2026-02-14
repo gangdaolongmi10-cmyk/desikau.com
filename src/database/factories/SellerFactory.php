@@ -59,12 +59,22 @@ class SellerFactory extends Factory
      */
     public function definition(): array
     {
+        $faker = fake('ja_JP');
         $categories = ['3d', 'ui', 'texture', 'font', 'other'];
         $shopName = fake()->randomElement(self::SHOP_NAMES) . fake()->unique()->randomNumber(3);
+        $prefectures = [
+            '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
+            '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
+            '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県',
+            '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県',
+            '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県',
+            '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県',
+            '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県',
+        ];
 
         return [
             'user_id' => null,
-            'email' => fake('ja_JP')->unique()->safeEmail(),
+            'email' => $faker->unique()->safeEmail(),
             'password' => Hash::make('password1'),
             'shop_name' => $shopName,
             'slug' => Str::slug($shopName) . '-' . fake()->unique()->randomNumber(5),
@@ -73,6 +83,12 @@ class SellerFactory extends Factory
             'twitter_username' => fake()->optional(0.6)->userName(),
             'youtube_url' => fake()->optional(0.4)->url(),
             'twitch_username' => fake()->optional(0.3)->userName(),
+            'postal_code' => $faker->optional(0.8)->postcode(),
+            'prefecture' => $faker->optional(0.8)->randomElement($prefectures),
+            'city' => $faker->optional(0.8)->city(),
+            'address' => $faker->optional(0.8)->streetAddress(),
+            'building' => $faker->optional(0.4)->secondaryAddress(),
+            'phone_number' => $faker->optional(0.8)->phoneNumber(),
         ];
     }
 

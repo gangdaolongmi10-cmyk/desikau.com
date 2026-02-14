@@ -26,10 +26,22 @@ use Laravel\Cashier\Billable;
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $icon_url
+ * @property string|null $postal_code
+ * @property string|null $prefecture
+ * @property string|null $city
+ * @property string|null $address
+ * @property string|null $building
+ * @property string|null $phone_number
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ *
+ * @property-read Seller|null $seller
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Product> $likedProducts
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Review> $reviews
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Order> $orders
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, PurchaseHistory> $purchaseHistories
  *
  * @package App\Models
  */
@@ -54,6 +66,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at',
         'password',
         'icon_url',
+        'postal_code',
+        'prefecture',
+        'city',
+        'address',
+        'building',
+        'phone_number',
         'remember_token',
     ];
 

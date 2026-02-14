@@ -50,7 +50,7 @@ composer:
 
 # データベースを再作成してシーディング
 fresh:
-	docker-compose exec app php artisan migrate:fresh --seed
+	docker-compose exec -T app php artisan migrate:fresh --seed
 
 # Laravelプロジェクトを新規作成
 init-laravel:
