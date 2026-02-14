@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sudo lsof:*)",
+      "Bash(ss:*)",
+      "Bash(netstat:*)",
+      "Bash(docker compose logs:*)",
+      "Bash(docker compose exec:*)",
+      "WebFetch(domain:readouble.com)",
+      "Bash(docker compose:*)",
+      "Bash(curl:*)",
+      "Bash(.husky/pre-commit:*)",
+      "Bash(docker-compose ps:*)",
+      "Bash(make:*)",
+      "Bash(docker-compose exec:*)"
+    ]
+  }
+}
